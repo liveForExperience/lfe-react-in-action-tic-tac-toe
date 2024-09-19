@@ -7,3 +7,5 @@
 - 2024-09-16: 文档教程的基础部分内容完成
 - 2024-09-16: 完成改进项 `For the current move only, show “You are at move #…” instead of a button.`
 - 2024-09-19: 完成改进项 `Rewrite Board to use two loops to make the squares instead of hardcoding them.`
+- 2024-09-19: 完成改进项 `Add a toggle button that lets you sort the moves in either ascending or descending order.`
+
