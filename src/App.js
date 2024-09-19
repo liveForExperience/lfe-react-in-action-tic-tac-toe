@@ -9,6 +9,10 @@ function Square({ value, onSquareClick }) {
          </button>;
 }
 
+function Row({ index }) {
+
+}
+
 function Board({xIsNext, squares, onPlay}) {
   function handeClick(i) {
     if (calculateWiner(squares)) {
@@ -28,24 +32,26 @@ function Board({xIsNext, squares, onPlay}) {
   const winner = calculateWiner(squares);
   let status = winner ? `Winner: ${winner}` : "Next player: " + (xIsNext ? "X" : "O");
 
+  const table = [];
+  for (let i = 0; i < 3; i++) {
+    const squareArr = [];
+    for (let j = 0; j < 3; j++) {
+      squareArr.push(
+        <Square value={squares[i * 3 + j]} onSquareClick={() => handeClick(i * 3 + j)}/>
+      )
+    }
+
+    table.push(
+      <div className="board-row">
+        {squareArr}
+      </div>
+    );
+  }  
+  
   return (
       <>
         <div className="status">{status}</div>
-        <div className="board-row">
-          <Square value={squares[0]} onSquareClick={() => handeClick(0)}/>
-          <Square value={squares[1]} onSquareClick={() => handeClick(1)}/>
-          <Square value={squares[2]} onSquareClick={() => handeClick(2)}/>
-        </div>
-        <div className="board-row">
-          <Square value={squares[3]} onSquareClick={() => handeClick(3)}/>
-          <Square value={squares[4]} onSquareClick={() => handeClick(4)}/>
-          <Square value={squares[5]} onSquareClick={() => handeClick(5)}/>
-        </div>
-        <div className="board-row">
-          <Square value={squares[6]} onSquareClick={() => handeClick(6)}/>
-          <Square value={squares[7]} onSquareClick={() => handeClick(7)}/>
-          <Square value={squares[8]} onSquareClick={() => handeClick(8)}/>
-        </div>
+        {table}
       </>
     );
 }
