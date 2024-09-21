@@ -23,7 +23,7 @@ function Board({xIsNext, currentMove, squares, onPlay}) {
     const nextSquares = squares.slice();
     nextSquares[i] = xIsNext ? 'X' : 'O';
 
-    onPlay(nextSquares);
+    onPlay(nextSquares, i);
   }
 
   const winRow = calculateWinRow(squares);
@@ -61,14 +61,14 @@ function Board({xIsNext, currentMove, squares, onPlay}) {
 }
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [history, setHistory] = useState([{squares: Array(9).fill(null), location: null}]);
   const [currentMove, setCurrentMove] = useState(0);
   const [toggle, setToggle] = useState(true);
   const xIsNext = currentMove % 2 === 0;
-  const currentSquare = history[currentMove];
+  const currentSquare = history[currentMove].squares;
 
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+  function handlePlay(nextSquares, index) {
+    const nextHistory = [...history.slice(0, currentMove + 1), {squares: nextSquares, location: index}];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
@@ -79,6 +79,7 @@ export default function Game() {
 
   const moves = history.map((square, move) => {
     let description = move > 0 ? `Go to move #${move}` : "Go to game start";
+    const location = {x: Math.floor(square?.location), y: square?.location % 3};
     return (
       move != currentMove ? (
         <li key={move}>
@@ -87,7 +88,7 @@ export default function Game() {
       ) : 
       (
         <li key={move}>
-          <div >You are at move #{move}</div>
+          <div >You are at move #{move} ({location.x}, {location.y})</div>
         </li>
       )
     );
