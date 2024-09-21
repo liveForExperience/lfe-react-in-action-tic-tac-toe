@@ -1,21 +1,18 @@
 import { useState } from 'react';
 
-function Square({ value, onSquareClick }) {
+function Square({key, value, onSquareClick, className }) {
   return <button
-          className='square'
+          key={key}
+          className={className}
           onClick={onSquareClick}
          >
             { value }
          </button>;
 }
 
-function Row({ index }) {
-
-}
-
-function Board({xIsNext, squares, onPlay}) {
+function Board({xIsNext, currentMove, squares, onPlay}) {
   function handeClick(i) {
-    if (calculateWiner(squares)) {
+    if (calculateWinRow(squares)) {
       return;
     }
 
@@ -29,20 +26,27 @@ function Board({xIsNext, squares, onPlay}) {
     onPlay(nextSquares);
   }
 
-  const winner = calculateWiner(squares);
+  const winRow = calculateWinRow(squares);
+  const winner = winRow ? squares[winRow[0]] : null;
+
   let status = winner ? `Winner: ${winner}` : "Next player: " + (xIsNext ? "X" : "O");
+  if (currentMove == 9 && !winner) {
+    status = 'draw';
+  }
 
   const table = [];
   for (let i = 0; i < 3; i++) {
     const squareArr = [];
     for (let j = 0; j < 3; j++) {
+      const index = i * 3 + j;
+      const className = winRow && (winRow[0] == index || winRow[1] == index || winRow[2] == index) ? "light-square" : "square";
       squareArr.push(
-        <Square value={squares[i * 3 + j]} onSquareClick={() => handeClick(i * 3 + j)}/>
+        <Square key={index} className={className} value={squares[index]} onSquareClick={() => handeClick(index)}/>
       )
     }
 
     table.push(
-      <div className="board-row">
+      <div key={'row' + i} className="board-row">
         {squareArr}
       </div>
     );
@@ -98,7 +102,7 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquare} onPlay={handlePlay}/>
+        <Board xIsNext={xIsNext} currentMove={currentMove} squares={currentSquare} onPlay={handlePlay}/>
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
@@ -108,7 +112,7 @@ export default function Game() {
   );
 }
 
-function calculateWiner(squares) {
+function calculateWinRow(squares) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -124,7 +128,7 @@ function calculateWiner(squares) {
     const [a, b, c] = lines[i];
 
     if (squares[a] && squares[a] == squares[b] && squares[b] == squares[c]) {
-      return squares[a];
+      return lines[i];
     }
   }
 
